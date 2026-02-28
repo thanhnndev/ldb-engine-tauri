@@ -1,6 +1,7 @@
 // Docker module for container management
 pub mod docker;
 pub mod commands;
+pub mod models;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -17,6 +18,13 @@ pub fn run() {
             commands::images::get_docker_tags,
             commands::images::get_supported_images,
             commands::images::pull_docker_image,
+            commands::instances::create_instance,
+            commands::instances::start_instance,
+            commands::instances::stop_instance,
+            commands::instances::restart_instance,
+            commands::instances::delete_instance,
+            commands::instances::list_instances,
+            commands::instances::get_instance_status,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
