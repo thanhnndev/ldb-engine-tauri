@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Instance } from '$lib/types';
   import InstanceControls from './InstanceControls.svelte';
+  import ConnectionString from './ConnectionString.svelte';
 
   interface Props {
     instance: Instance;
@@ -87,6 +88,16 @@
       </div>
     {/if}
   </div>
+
+  {#if instance.status === 'running'}
+    <ConnectionString 
+      instanceId={instance.id}
+      instanceName={instance.name}
+      databaseType={instance.database_type}
+      port={instance.port}
+      status={instance.status}
+    />
+  {/if}
 
   <InstanceControls 
     status={instance.status}
