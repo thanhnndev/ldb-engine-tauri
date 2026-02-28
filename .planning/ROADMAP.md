@@ -25,7 +25,10 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
   5. User can select a specific image version (e.g., postgres:16-alpine)
   6. User can see real-time download progress when pulling images
 
-**Plans**: TBD
+**Plans**: 3 plans in 3 waves
+  - [ ] 01-01-PLAN.md — Dependencies Setup
+  - [ ] 01-02-PLAN.md — Docker Hub API + Pull Backend
+  - [ ] 01-03-PLAN.md — Frontend UI Components
 
 ---
 
