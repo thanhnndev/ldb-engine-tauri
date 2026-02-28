@@ -46,6 +46,8 @@ pub struct Instance {
     pub root_password: String,
     pub status: InstanceStatus,
     pub created_at: DateTime<Utc>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub volume_path: Option<String>,
 }
 
 impl Instance {
@@ -67,6 +69,7 @@ impl Instance {
             root_password,
             status: InstanceStatus::Stopped,
             created_at: Utc::now(),
+            volume_path: None,
         }
     }
 }
@@ -79,5 +82,6 @@ pub struct CreateInstanceRequest {
     pub image: String,
     pub tag: String,
     pub password: String,
-    pub port: u16,
+    #[serde(default)]
+    pub port: Option<u16>,
 }

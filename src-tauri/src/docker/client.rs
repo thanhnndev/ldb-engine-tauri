@@ -1,5 +1,5 @@
 use bollard::Docker;
-use bollard::query_parameters::CreateImageOptions;
+use bollard::image::CreateImageOptions;
 use futures::StreamExt;
 use tauri::{AppHandle, Emitter};
 
@@ -31,12 +31,12 @@ impl DockerClient {
 
     /// Pull an image from Docker Hub with progress streaming
     pub async fn pull_image(&self, app: AppHandle, image: &str) -> Result<(), String> {
-        let options = Some(CreateImageOptions {
-            from_image: Some(image.to_string()),
+        let options = CreateImageOptions {
+            from_image: image.to_string(),
             ..Default::default()
-        });
+        };
 
-        let mut stream = self.docker.create_image(options, None, None);
+        let mut stream = self.docker.create_image(Some(options), None, None);
 
         while let Some(result) = stream.next().await {
             match result {
