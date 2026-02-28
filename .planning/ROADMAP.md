@@ -70,7 +70,7 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
   3. Connection string follows standard format (e.g., postgresql://user:password@127.0.0.1:5432/db)
 
 **Plans**: 2 plans in 2 waves
-  - [ ] 03-01-PLAN.md — Backend connection string command
+  - [x] 03-01-PLAN.md — Backend connection string command
   - [ ] 03-02-PLAN.md — Frontend component + clipboard integration
 
 ---
@@ -95,5 +95,5 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 |-------|----------------|--------|-----------|
 | 1. Docker Hub Integration | 3/3 | ✓ Complete | 2026-02-28 |
 | 2. Instance Management | 3/3 | ✓ Complete | 2026-02-28 |
-| 3. Connection Utilities | 0/2 | Ready | - |
+| 3. Connection Utilities | 1/2 | In progress | - |
 | 4. Log Viewer | 0/TBD | Not started | - |
