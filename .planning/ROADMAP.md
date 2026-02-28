@@ -1,0 +1,91 @@
+# Roadmap: LDB-Engine
+
+## Overview
+
+A lightweight, GUI-driven local database manager for Linux developers that provides 1-click database instance setup (PostgreSQL, Redis, MySQL, MongoDB) powered by Docker. The journey progresses from core Docker connectivity through instance management to connection utilities and log viewing.
+
+## Phases
+
+- [ ] **Phase 1: Docker Hub Integration** - Core foundation for discovering and pulling database images
+- [ ] **Phase 2: Instance Management** - Full CRUD lifecycle with persistent storage
+- [ ] **Phase 3: Connection Utilities** - Easy connection string generation and copying
+- [ ] **Phase 4: Log Viewer** - Real-time container log streaming
+
+## Phase Details
+
+### Phase 1: Docker Hub Integration
+**Goal**: Users can discover official database images from Docker Hub and pull them to local system
+**Depends on**: Nothing (first phase)
+**Requirements**: DOCK-01, DOCK-02, DOCK-03, DOCK-04, DOCK-05, DOCK-06
+**Success Criteria** (what must be TRUE):
+  1. User can view available tags for PostgreSQL from Docker Hub
+  2. User can view available tags for Redis from Docker Hub
+  3. User can view available tags for MySQL from Docker Hub
+  4. User can view available tags for MongoDB from Docker Hub
+  5. User can select a specific image version (e.g., postgres:16-alpine)
+  6. User can see real-time download progress when pulling images
+
+**Plans**: TBD
+
+---
+
+### Phase 2: Instance Management
+**Goal**: Users can create, configure, start, stop, restart, and delete database instances with persistent storage
+**Depends on**: Phase 1
+**Requirements**: INST-01, INST-02, INST-03, INST-04, INST-05, INST-06, LIFE-01, LIFE-02, LIFE-03, LIFE-04, LIFE-05, LIFE-06, PERS-01, PERS-02, PERS-03, PERS-04
+**Success Criteria** (what must be TRUE):
+  1. User can create a new database instance with a custom name
+  2. User can select database type (PostgreSQL, Redis, MySQL, MongoDB)
+  3. User can select image version from available tags
+  4. User can set root password (required for PostgreSQL/MySQL, optional for Redis)
+  5. System auto-detects occupied ports and suggests next available
+  6. System correctly maps password to environment variables for each database type
+  7. User can start a database instance
+  8. User can stop a database instance
+  9. User can restart a database instance
+  10. User can delete a database instance
+  11. System displays current state (Running, Stopped, Error) in real-time
+  12. System creates local directories for volume mounts automatically
+  13. Data persists across container restarts
+  14. Upon deletion, system prompts with checkbox to delete associated volume data
+  15. User can choose to delete or retain volume data on instance removal
+
+**Plans**: TBD
+
+---
+
+### Phase 3: Connection Utilities
+**Goal**: Users can easily obtain connection strings to connect to their running databases
+**Depends on**: Phase 2
+**Requirements**: CONN-01, CONN-02, CONN-03
+**Success Criteria** (what must be TRUE):
+  1. System generates standard connection string for running instance
+  2. User can copy connection string to clipboard with one click
+  3. Connection string follows standard format (e.g., postgresql://user:password@127.0.0.1:5432/db)
+
+**Plans**: TBD
+
+---
+
+### Phase 4: Log Viewer
+**Goal**: Users can view real-time logs from their database containers
+**Depends on**: Phase 3
+**Requirements**: LOGS-01, LOGS-02, LOGS-03, LOGS-04
+**Success Criteria** (what must be TRUE):
+  1. User can view logs from selected container in embedded terminal view
+  2. System streams stdout from container in real-time
+  3. System streams stderr from container in real-time
+  4. User can watch logs update as container produces output
+
+**Plans**: TBD
+
+---
+
+## Progress
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Docker Hub Integration | 0/TBD | Not started | - |
+| 2. Instance Management | 0/TBD | Not started | - |
+| 3. Connection Utilities | 0/TBD | Not started | - |
+| 4. Log Viewer | 0/TBD | Not started | - |
