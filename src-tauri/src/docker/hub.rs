@@ -1,5 +1,6 @@
 use reqwest::Client;
 use serde::Deserialize;
+use std::time::Duration;
 
 const DOCKER_HUB_API: &str = "https://hub.docker.com/v2";
 
@@ -24,9 +25,13 @@ pub struct DockerHubClient {
 
 impl DockerHubClient {
     pub fn new() -> Self {
-        Self {
-            http: Client::new(),
-        }
+        // Create client with timeout to prevent hanging
+        let http = Client::builder()
+            .timeout(Duration::from_secs(10))
+            .build()
+            .unwrap_or_else(|_| Client::new());
+        
+        Self { http }
     }
 
     /// Fetch tags for a Docker Hub image (e.g., "library/postgres")

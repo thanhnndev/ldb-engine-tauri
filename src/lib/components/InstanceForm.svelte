@@ -1,5 +1,6 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import { onMount } from 'svelte';
   import { SUPPORTED_IMAGES, type ImageTag, type DatabaseType, type CreateInstanceRequest } from '$lib/types';
 
   interface Props {
@@ -18,37 +19,53 @@
 
   let tags = $state<ImageTag[]>([]);
   let loadingTags = $state(false);
+  let tagsError = $state<string | null>(null);
   let errors = $state<Record<string, string>>({});
 
   async function loadTags() {
     const image = SUPPORTED_IMAGES.find(img => img.id === databaseType);
-    if (!image) return;
+    if (!image) {
+      tagsError = 'Unknown database type';
+      loadingTags = false;
+      return;
+    }
 
     loadingTags = true;
+    tagsError = null;
     tags = [];
     imageTag = '';
     
     try {
-      tags = await invoke<ImageTag[]>("get_docker_tags", { image: image.hubName });
+      // Add a timeout to prevent infinite loading
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Loading versions timed out')), 15000);
+      });
+      
+      tags = await Promise.race([
+        invoke<ImageTag[]>("get_docker_tags", { image: image.hubName }),
+        timeoutPromise
+      ]);
+      
       // Set default tag to latest or first available
       const latestTag = tags.find(t => t.name === 'latest');
       imageTag = latestTag ? latestTag.name : (tags[0]?.name || '');
     } catch (e) {
       console.error("Failed to load tags:", e);
+      tagsError = String(e);
+      tags = [];
     } finally {
       loadingTags = false;
     }
   }
 
   function handleTypeChange() {
-    loadTags();
     // Auto-suggest port based on database type
     const image = SUPPORTED_IMAGES.find(img => img.id === databaseType);
     if (image) {
       port = image.default_port;
     }
-    // Clear image tag when type changes
-    imageTag = '';
+    // Load tags for the new type
+    loadTags();
   }
 
   function validate(): boolean {
@@ -96,8 +113,8 @@
     onsubmit(request);
   }
 
-  // Load tags on mount
-  $effect(() => {
+  // Load tags on mount only (handleTypeChange handles subsequent loads)
+  onMount(() => {
     loadTags();
   });
 </script>
@@ -140,6 +157,11 @@
       <div class="loading-tags">
         <span class="spinner"></span>
         Loading versions...
+      </div>
+    {:else if tagsError}
+      <div class="tags-error">
+        <span class="error-text">{tagsError}</span>
+        <button type="button" class="retry-btn" onclick={loadTags}>Retry</button>
       </div>
     {:else}
       <select 
@@ -291,6 +313,38 @@
     padding: 0.625rem 0.875rem;
     color: #6b7280;
     font-size: 0.9rem;
+  }
+
+  .tags-error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+  }
+
+  .tags-error .error-text {
+    color: #dc2626;
+    font-size: 0.9rem;
+    flex: 1;
+  }
+
+  .retry-btn {
+    padding: 0.25rem 0.75rem;
+    border: none;
+    border-radius: 4px;
+    background: #3b82f6;
+    color: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .retry-btn:hover {
+    background: #2563eb;
   }
 
   .spinner {

@@ -14,13 +14,30 @@
 
   let pollInterval: ReturnType<typeof setInterval> | null = null;
 
+  // Helper function to add timeout to promises
+  function withTimeout<T>(promise: Promise<T>, ms: number, errorMessage: string): Promise<T> {
+    const timeout = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error(errorMessage)), ms);
+    });
+    return Promise.race([promise, timeout]);
+  }
+
   async function loadInstances() {
     try {
-      instances = await invoke<Instance[]>("list_instances");
+      instances = await withTimeout(
+        invoke<Instance[]>("list_instances"),
+        10000,
+        'Loading instances timed out. Make sure Docker is running.'
+      );
       error = null;
     } catch (e) {
       console.error("Failed to load instances:", e);
-      error = String(e);
+      const errorMsg = String(e);
+      if (errorMsg.includes('Docker') || errorMsg.includes('docker')) {
+        error = 'Failed to connect to Docker. Please ensure Docker is running.';
+      } else {
+        error = errorMsg;
+      }
     } finally {
       loading = false;
     }

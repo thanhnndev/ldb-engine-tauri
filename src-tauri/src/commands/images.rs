@@ -2,6 +2,9 @@ use crate::docker::hub::DockerHubClient;
 use crate::docker::client::DockerClient;
 use tauri::AppHandle;
 
+// Import the MAX_PAGES constant from hub module
+const MAX_PAGES: usize = 5;
+
 #[derive(Clone, serde::Serialize)]
 pub struct ImageTag {
     pub name: String,
@@ -12,7 +15,7 @@ pub struct ImageTag {
 pub async fn get_docker_tags(image: String) -> Result<Vec<ImageTag>, String> {
     let client = DockerHubClient::new();
 
-    // Fetch all pages to get complete tag list
+    // Fetch limited pages to prevent long loading times
     let mut all_tags = Vec::new();
     let mut page = 1;
 
@@ -27,7 +30,8 @@ pub async fn get_docker_tags(image: String) -> Result<Vec<ImageTag>, String> {
 
                 all_tags.extend(tags);
 
-                if response.next.is_none() {
+                // Stop if no more pages or reached max pages
+                if response.next.is_none() || page >= MAX_PAGES {
                     break;
                 }
                 page += 1;
