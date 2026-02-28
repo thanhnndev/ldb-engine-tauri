@@ -41,9 +41,9 @@
 
 ### Connection Utilities
 
-- [ ] **CONN-01**: System generates standard connection string for running instance
-- [ ] **CONN-02**: User can copy connection string with one click
-- [ ] **CONN-03**: Connection string uses format: `postgresql://user:password@127.0.0.1:5432/db`
+- [x] **CONN-01**: System generates standard connection string for running instance
+- [x] **CONN-02**: User can copy connection string with one click
+- [x] **CONN-03**: Connection string uses format: `postgresql://user:password@127.0.0.1:5432/db`
 
 ### Log Viewer
 
@@ -93,9 +93,9 @@
 | PERS-02 | Phase 2 | Complete |
 | PERS-03 | Phase 2 | Complete |
 | PERS-04 | Phase 2 | Complete |
-| CONN-01 | Phase 3 | Pending |
-| CONN-02 | Phase 3 | Pending |
-| CONN-03 | Phase 3 | Pending |
+| CONN-01 | Phase 3 | Complete |
+| CONN-02 | Phase 3 | Complete |
+| CONN-03 | Phase 3 | Complete |
 | LOGS-01 | Phase 4 | Pending |
 | LOGS-02 | Phase 4 | Pending |
 | LOGS-03 | Phase 4 | Pending |

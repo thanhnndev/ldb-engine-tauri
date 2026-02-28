@@ -8,7 +8,7 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 
 - [x] **Phase 1: Docker Hub Integration** - Core foundation for discovering and pulling database images
 - [x] **Phase 2: Instance Management** - Full CRUD lifecycle with persistent storage
-- [ ] **Phase 3: Connection Utilities** - Easy connection string generation and copying
+- [x] **Phase 3: Connection Utilities** - Easy connection string generation and copying
 - [ ] **Phase 4: Log Viewer** - Real-time container log streaming
 
 ## Phase Details
@@ -71,7 +71,7 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 
 **Plans**: 2 plans in 2 waves
   - [x] 03-01-PLAN.md — Backend connection string command
-  - [ ] 03-02-PLAN.md — Frontend component + clipboard integration
+  - [x] 03-02-PLAN.md — Frontend component + clipboard integration
 
 ---
 
@@ -95,5 +95,5 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 |-------|----------------|--------|-----------|
 | 1. Docker Hub Integration | 3/3 | ✓ Complete | 2026-02-28 |
 | 2. Instance Management | 3/3 | ✓ Complete | 2026-02-28 |
-| 3. Connection Utilities | 1/2 | In progress | - |
+| 3. Connection Utilities | 2/2 | ✓ Complete | 2026-02-28 |
 | 4. Log Viewer | 0/TBD | Not started | - |
