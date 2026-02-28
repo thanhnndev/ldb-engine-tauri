@@ -21,12 +21,47 @@
   let loadingTags = $state(false);
   let tagsError = $state<string | null>(null);
   let errors = $state<Record<string, string>>({});
+  
+  // Cache tags per database type to avoid re-fetching
+  const tagsCache = new Map<DatabaseType, ImageTag[]>();
+  
+  // Debounce timer
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // Group tags by category for better UX
+  const groupedTags = $derived(() => {
+    const groups: { recommended: ImageTag[]; alpine: ImageTag[]; slim: ImageTag[]; version: ImageTag[]; other: ImageTag[] } = {
+      recommended: [],
+      alpine: [],
+      slim: [],
+      version: [],
+      other: []
+    };
+    
+    for (const tag of tags) {
+      const category = tag.category || 'other';
+      if (category in groups) {
+        groups[category as keyof typeof groups].push(tag);
+      }
+    }
+    
+    return groups;
+  });
 
   async function loadTags() {
     const image = SUPPORTED_IMAGES.find(img => img.id === databaseType);
     if (!image) {
       tagsError = 'Unknown database type';
       loadingTags = false;
+      return;
+    }
+
+    // Check cache first
+    if (tagsCache.has(databaseType)) {
+      tags = tagsCache.get(databaseType)!;
+      // Set default tag to latest or first available
+      const latestTag = tags.find(t => t.name === 'latest');
+      imageTag = latestTag ? latestTag.name : (tags[0]?.name || '');
       return;
     }
 
@@ -38,13 +73,17 @@
     try {
       // Add a timeout to prevent infinite loading
       const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Loading versions timed out')), 15000);
+        setTimeout(() => reject(new Error('Loading versions timed out')), 10000);
       });
       
-      tags = await Promise.race([
+      const fetchedTags = await Promise.race([
         invoke<ImageTag[]>("get_docker_tags", { image: image.hubName }),
         timeoutPromise
       ]);
+      
+      // Cache the tags for this database type
+      tagsCache.set(databaseType, fetchedTags);
+      tags = fetchedTags;
       
       // Set default tag to latest or first available
       const latestTag = tags.find(t => t.name === 'latest');
@@ -64,8 +103,15 @@
     if (image) {
       port = image.default_port;
     }
-    // Load tags for the new type
-    loadTags();
+    
+    // Debounce tag loading to prevent rapid API calls
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+    
+    debounceTimer = setTimeout(() => {
+      loadTags();
+    }, 150);
   }
 
   function validate(): boolean {
@@ -156,7 +202,7 @@
     {#if loadingTags}
       <div class="loading-tags">
         <span class="spinner"></span>
-        Loading versions...
+        <span>Loading versions...</span>
       </div>
     {:else if tagsError}
       <div class="tags-error">
@@ -170,11 +216,56 @@
         disabled={loading || tags.length === 0}
         class:error={errors.imageTag}
       >
-        <option value="">Select version</option>
-        {#each tags as tag}
-          <option value={tag.name}>{tag.name}</option>
-        {/each}
+        <option value="" disabled>Select version</option>
+        
+        {#if groupedTags().recommended.length > 0}
+          <optgroup label="⭐ Recommended">
+            {#each groupedTags().recommended as tag}
+              <option value={tag.name}>
+                {tag.name}
+                {#if tag.name === 'latest'}
+                  (stable)
+                {:else if tag.name.includes('-alpine')}
+                  (lightweight)
+                {/if}
+              </option>
+            {/each}
+          </optgroup>
+        {/if}
+        
+        {#if groupedTags().alpine.length > 0}
+          <optgroup label="🏔️ Alpine (Lightweight)">
+            {#each groupedTags().alpine as tag}
+              <option value={tag.name}>{tag.name}</option>
+            {/each}
+          </optgroup>
+        {/if}
+        
+        {#if groupedTags().slim.length > 0}
+          <optgroup label="📦 Slim">
+            {#each groupedTags().slim as tag}
+              <option value={tag.name}>{tag.name}</option>
+            {/each}
+          </optgroup>
+        {/if}
+        
+        {#if groupedTags().version.length > 0}
+          <optgroup label="📋 Version Tags">
+            {#each groupedTags().version as tag}
+              <option value={tag.name}>{tag.name}</option>
+            {/each}
+          </optgroup>
+        {/if}
+        
+        {#if groupedTags().other.length > 0}
+          <optgroup label="📁 Other">
+            {#each groupedTags().other as tag}
+              <option value={tag.name}>{tag.name}</option>
+            {/each}
+          </optgroup>
+        {/if}
       </select>
+      <span class="hint">{tags.length} versions available</span>
     {/if}
     {#if errors.imageTag}
       <span class="error-message">{errors.imageTag}</span>
@@ -291,6 +382,24 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+  
+  /* Style for version select dropdown */
+  select#imageTag {
+    cursor: pointer;
+    max-height: 300px;
+  }
+  
+  select#imageTag optgroup {
+    font-weight: 600;
+    color: #374151;
+    background: #f3f4f6;
+  }
+  
+  select#imageTag option {
+    font-weight: 400;
+    color: #4b5563;
+    padding: 0.25rem 0.5rem;
+  }
 
   .hint {
     display: block;
@@ -313,6 +422,15 @@
     padding: 0.625rem 0.875rem;
     color: #6b7280;
     font-size: 0.9rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+  }
+  
+  .loading-tags .spinner {
+    width: 14px;
+    height: 14px;
+    border-width: 2px;
   }
 
   .tags-error {
@@ -354,6 +472,7 @@
     border-top-color: #3b82f6;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
   }
 
   @keyframes spin {

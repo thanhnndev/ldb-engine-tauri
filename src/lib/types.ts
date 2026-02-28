@@ -26,6 +26,8 @@ export interface CreateInstanceRequest {
 
 export interface ImageTag {
   name: string;
+  category?: string;
+  is_recommended?: boolean;
 }
 
 export interface SupportedImage {
