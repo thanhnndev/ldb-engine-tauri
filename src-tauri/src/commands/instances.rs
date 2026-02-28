@@ -1,8 +1,6 @@
 use bollard::container::{Config, CreateContainerOptions, ListContainersOptions, RemoveContainerOptions, StartContainerOptions, StopContainerOptions};
-use bollard::image::CreateImageOptions;
 use bollard::Docker;
 use chrono::Utc;
-use futures::StreamExt;
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -64,6 +62,7 @@ fn get_instance_status(state: &bollard::models::ContainerState) -> InstanceStatu
 }
 
 /// Create a new database container (without starting it)
+/// Note: The image should be pulled separately via pull_docker_image before calling this
 #[tauri::command]
 pub async fn create_instance(request: CreateInstanceRequest) -> Result<Instance, String> {
     let docker = Docker::connect_with_local_defaults()
@@ -140,28 +139,8 @@ pub async fn create_instance(request: CreateInstanceRequest) -> Result<Instance,
         platform: None,
     };
 
-    // Pull image first if not present
-    let mut stream = docker.create_image(
-        Some(CreateImageOptions {
-            from_image: full_image.clone(),
-            ..Default::default()
-        }),
-        None,
-        None,
-    );
-
-    while let Some(result) = stream.next().await {
-        match result {
-            Ok(info) => {
-                if let Some(status) = info.status {
-                    println!("Pull status: {}", status);
-                }
-            }
-            Err(e) => {
-                return Err(format!("Failed to pull image: {}", e));
-            }
-        }
-    }
+    // Note: Image should already be pulled via pull_docker_image before this call
+    // We don't pull here to allow the frontend to show progress
 
     // Create the container
     let response = docker

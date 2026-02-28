@@ -1,7 +1,8 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import { listen } from "@tauri-apps/api/event";
   import { onMount, onDestroy } from 'svelte';
-  import type { Instance, CreateInstanceRequest } from '$lib/types';
+  import type { Instance, CreateInstanceRequest, PullProgress } from '$lib/types';
   import InstanceCard from './InstanceCard.svelte';
   import InstanceForm from './InstanceForm.svelte';
 
@@ -12,7 +13,14 @@
   let creating = $state(false);
   let operationLoading = $state<string | null>(null);
 
+  // Progress tracking for image pulls
+  let pullProgress = $state<PullProgress | null>(null);
+  let creationStage = $state<string>('');
+  let pullPercentage = $state<number>(0);
+
   let pollInterval: ReturnType<typeof setInterval> | null = null;
+  let unlistenProgress: (() => void) | null = null;
+  let unlistenComplete: (() => void) | null = null;
 
   // Helper function to add timeout to promises
   function withTimeout<T>(promise: Promise<T>, ms: number, errorMessage: string): Promise<T> {
@@ -45,17 +53,33 @@
 
   async function createInstance(request: CreateInstanceRequest) {
     creating = true;
-    operationLoading = 'create';
+    creationStage = 'pulling';
+    pullProgress = null;
+    pullPercentage = 0;
+    error = null;
+
     try {
+      const fullImage = `${request.image}:${request.tag}`;
+      
+      // First, pull the image (with progress events)
+      creationStage = 'pulling';
+      await invoke("pull_docker_image", { image: fullImage });
+      
+      // Then create the container
+      creationStage = 'creating';
       const newInstance = await invoke<Instance>("create_instance", { request });
+      
       instances = [...instances, newInstance];
       showForm = false;
+      creationStage = '';
     } catch (e) {
       console.error("Failed to create instance:", e);
       error = String(e);
+      creationStage = '';
     } finally {
       creating = false;
-      operationLoading = null;
+      pullProgress = null;
+      pullPercentage = 0;
     }
   }
 
@@ -122,13 +146,34 @@
     }
   }
 
+  async function setupEventListeners() {
+    // Listen for pull progress events
+    unlistenProgress = await listen<PullProgress>('pull-progress', (event) => {
+      pullProgress = event.payload;
+      // Calculate percentage if we have progress details
+      if (event.payload.progress_detail?.current && event.payload.progress_detail?.total) {
+        pullPercentage = Math.round(
+          (event.payload.progress_detail.current / event.payload.progress_detail.total) * 100
+        );
+      }
+    });
+
+    unlistenComplete = await listen<string>('pull-complete', () => {
+      pullProgress = null;
+      pullPercentage = 100;
+    });
+  }
+
   onMount(() => {
     loadInstances();
     startPolling();
+    setupEventListeners();
   });
 
   onDestroy(() => {
     stopPolling();
+    if (unlistenProgress) unlistenProgress();
+    if (unlistenComplete) unlistenComplete();
   });
 </script>
 
@@ -159,11 +204,49 @@
   {#if showForm}
     <div class="form-overlay">
       <div class="form-container">
-        <InstanceForm 
-          onsubmit={createInstance}
-          oncancel={() => showForm = false}
-          loading={creating}
-        />
+        {#if creating}
+          <div class="progress-overlay">
+            <div class="progress-content">
+              <div class="progress-spinner"></div>
+              <div class="progress-stage">
+                {#if creationStage === 'pulling'}
+                  <span class="stage-icon">📥</span>
+                  <span>Pulling Docker image...</span>
+                {:else if creationStage === 'creating'}
+                  <span class="stage-icon">🐳</span>
+                  <span>Creating container...</span>
+                {:else}
+                  <span class="stage-icon">⏳</span>
+                  <span>Processing...</span>
+                {/if}
+              </div>
+              {#if pullProgress && pullProgress.status}
+                <div class="progress-details">
+                  <p class="progress-status">{pullProgress.status}</p>
+                  {#if pullProgress.progress}
+                    <div class="progress-bar-container">
+                      <div class="progress-bar" style="width: {Math.min(pullPercentage, 100)}%"></div>
+                    </div>
+                    <p class="progress-text">{pullProgress.progress}</p>
+                  {/if}
+                </div>
+              {:else if creationStage === 'pulling'}
+                <div class="progress-details">
+                  <p class="progress-status">Downloading image layers...</p>
+                  <div class="progress-bar-container">
+                    <div class="progress-bar indeterminate"></div>
+                  </div>
+                </div>
+              {/if}
+            </div>
+          </div>
+        {:else}
+          <InstanceForm 
+            onsubmit={createInstance}
+            oncancel={() => showForm = false}
+            loading={creating}
+          />
+        {/if}
       </div>
     </div>
   {/if}
@@ -285,6 +368,85 @@
     background: white;
     border-radius: 12px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  .progress-overlay {
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .progress-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .progress-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .progress-stage {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #1f2937;
+  }
+
+  .stage-icon {
+    font-size: 1.5rem;
+  }
+
+  .progress-details {
+    width: 100%;
+    max-width: 350px;
+    margin-top: 0.5rem;
+  }
+
+  .progress-status {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0 0 0.75rem;
+    word-break: break-word;
+  }
+
+  .progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #2563eb);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  .progress-bar.indeterminate {
+    width: 30%;
+    animation: indeterminate 1.5s infinite linear;
+  }
+
+  @keyframes indeterminate {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+
+  .progress-text {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin: 0.5rem 0 0;
+    font-family: monospace;
   }
 
   .loading {

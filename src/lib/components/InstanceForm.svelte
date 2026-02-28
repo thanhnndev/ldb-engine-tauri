@@ -333,31 +333,37 @@
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 2rem;
   }
 
   h3 {
-    margin: 0 0 1.5rem;
-    font-size: 1.25rem;
+    margin: 0 0 1.75rem;
+    font-size: 1.35rem;
     font-weight: 600;
     color: #1f2937;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f3f4f6;
   }
 
   .form-group {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group:last-of-type {
+    margin-bottom: 0;
   }
 
   label {
     display: block;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: #374151;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.625rem;
   }
 
   input, select {
     width: 100%;
-    padding: 0.625rem 0.875rem;
+    padding: 0.75rem 1rem;
     border: 1px solid #d1d5db;
     border-radius: 8px;
     font-size: 0.95rem;
