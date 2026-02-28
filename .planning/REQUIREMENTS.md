@@ -7,12 +7,12 @@
 
 ### Docker Hub Integration
 
-- [ ] **DOCK-01**: System fetches and displays official repository tags from Docker Hub for PostgreSQL
-- [ ] **DOCK-02**: System fetches and displays official repository tags from Docker Hub for Redis
-- [ ] **DOCK-03**: System fetches and displays official repository tags from Docker Hub for MySQL
-- [ ] **DOCK-04**: System fetches and displays official repository tags from Docker Hub for MongoDB
-- [ ] **DOCK-05**: User can select specific image version (e.g., `postgres:16-alpine`, `redis:7.2`)
-- [ ] **DOCK-06**: System displays real-time download/pull progress when fetching images
+- [x] **DOCK-01**: System fetches and displays official repository tags from Docker Hub for PostgreSQL
+- [x] **DOCK-02**: System fetches and displays official repository tags from Docker Hub for Redis
+- [x] **DOCK-03**: System fetches and displays official repository tags from Docker Hub for MySQL
+- [x] **DOCK-04**: System fetches and displays official repository tags from Docker Hub for MongoDB
+- [x] **DOCK-05**: User can select specific image version (e.g., `postgres:16-alpine`, `redis:7.2`)
+- [x] **DOCK-06**: System displays real-time download/pull progress when fetching images
 
 ### Instance Creation
 
@@ -71,12 +71,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DOCK-01 | Phase 1 | Pending |
-| DOCK-02 | Phase 1 | Pending |
-| DOCK-03 | Phase 1 | Pending |
-| DOCK-04 | Phase 1 | Pending |
-| DOCK-05 | Phase 1 | Pending |
-| DOCK-06 | Phase 1 | Pending |
+| DOCK-01 | Phase 1 | Complete |
+| DOCK-02 | Phase 1 | Complete |
+| DOCK-03 | Phase 1 | Complete |
+| DOCK-04 | Phase 1 | Complete |
+| DOCK-05 | Phase 1 | Complete |
+| DOCK-06 | Phase 1 | Complete |
 | INST-01 | Phase 2 | Pending |
 | INST-02 | Phase 2 | Pending |
 | INST-03 | Phase 2 | Pending |
