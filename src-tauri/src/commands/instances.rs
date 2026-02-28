@@ -19,26 +19,43 @@ fn get_volume_path(database_type: &DatabaseType) -> &str {
 }
 
 /// Get environment variables for a database type
+/// Password is required for PostgreSQL and MySQL, optional for Redis and MongoDB
 fn get_env_vars(database_type: &DatabaseType, password: &str) -> Vec<(String, String)> {
     match database_type {
         DatabaseType::PostgreSQL => vec![("POSTGRES_PASSWORD".to_string(), password.to_string())],
         DatabaseType::MySQL => vec![("MYSQL_ROOT_PASSWORD".to_string(), password.to_string())],
-        DatabaseType::MongoDB => vec![
-            ("MONGO_INITDB_ROOT_USERNAME".to_string(), "root".to_string()),
-            ("MONGO_INITDB_ROOT_PASSWORD".to_string(), password.to_string()),
-        ],
+        DatabaseType::MongoDB => {
+            // MongoDB can work without authentication
+            if password.is_empty() {
+                vec![]
+            } else {
+                vec![
+                    ("MONGO_INITDB_ROOT_USERNAME".to_string(), "root".to_string()),
+                    ("MONGO_INITDB_ROOT_PASSWORD".to_string(), password.to_string()),
+                ]
+            }
+        }
         DatabaseType::Redis => vec![],
     }
 }
 
 /// Get the command for a database type (used for Redis which uses CMD instead of ENV)
+/// Only adds --requirepass if a password is provided
 fn get_database_command(database_type: &DatabaseType, password: &str) -> Option<Vec<String>> {
     match database_type {
-        DatabaseType::Redis => Some(vec![
-            "redis-server".to_string(),
-            "--requirepass".to_string(),
-            password.to_string(),
-        ]),
+        DatabaseType::Redis => {
+            if password.is_empty() {
+                // Redis without authentication
+                Some(vec!["redis-server".to_string()])
+            } else {
+                // Redis with password authentication
+                Some(vec![
+                    "redis-server".to_string(),
+                    "--requirepass".to_string(),
+                    password.to_string(),
+                ])
+            }
+        }
         _ => None,
     }
 }
