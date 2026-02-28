@@ -480,6 +480,22 @@ pub async fn list_instances() -> Result<Vec<Instance>, String> {
         .await
         .map_err(|e| format!("Failed to list containers: {}", e))?;
 
+    // Load stored instances from state to get correct IDs and passwords
+    let state_manager = StateManager::new().ok();
+    let stored_instances: std::collections::HashMap<String, Instance> = state_manager
+        .as_ref()
+        .and_then(|sm| sm.load_instances().ok())
+        .map(|instances| {
+            instances
+                .into_iter()
+                .map(|i| {
+                    let container_name = format!("ldb-{}", i.name.replace(' ', "-").to_lowercase());
+                    (container_name, i)
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
     let mut instances = Vec::new();
 
     for container in containers {
@@ -524,21 +540,12 @@ pub async fn list_instances() -> Result<Vec<Instance>, String> {
             .map(|dt| dt.with_timezone(&Utc))
             .unwrap_or_else(Utc::now);
 
-        // Try to get volume path from state
-        let state_manager = StateManager::new().ok();
-        let volume_path = state_manager
-            .and_then(|sm| {
-                let instances = sm.load_instances().ok()?;
-                instances.into_iter().find(|i| {
-                    let container_name = format!("ldb-{}", i.name.replace(' ', "-").to_lowercase());
-                    container_name == name
-                })
-            })
-            .and_then(|i| i.volume_path);
-
+        // Look up stored instance by container name to get correct ID and password
+        let stored = stored_instances.get(&name);
+        
         let instance = Instance {
-            id: Uuid::new_v4(),
-            name,
+            id: stored.map(|i| i.id).unwrap_or_else(Uuid::new_v4),
+            name: stored.map(|i| i.name.clone()).unwrap_or_else(|| name.clone()),
             database_type,
             image: image.clone(),
             tag: image.split(':').nth(1).unwrap_or("latest").to_string(),
@@ -546,10 +553,10 @@ pub async fn list_instances() -> Result<Vec<Instance>, String> {
                 .and_then(|ports| ports.first())
                 .and_then(|p| p.public_port)
                 .unwrap_or(0),
-            root_password: String::new(),
+            root_password: stored.map(|i| i.root_password.clone()).unwrap_or_default(),
             status: get_instance_status(&state),
-            created_at,
-            volume_path,
+            created_at: stored.map(|i| i.created_at).unwrap_or(created_at),
+            volume_path: stored.and_then(|i| i.volume_path.clone()),
         };
 
         instances.push(instance);
