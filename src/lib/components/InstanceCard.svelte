@@ -2,6 +2,7 @@
   import type { Instance } from '$lib/types';
   import InstanceControls from './InstanceControls.svelte';
   import ConnectionString from './ConnectionString.svelte';
+  import LogViewer from './LogViewer.svelte';
 
   interface Props {
     instance: Instance;
@@ -13,6 +14,12 @@
   }
 
   let { instance, onstart, onstop, onrestart, ondelete, loading = false }: Props = $props();
+
+  let showLogs = $state(false);
+
+  // Format container name to match backend: "ldb-{name}"
+  // Backend uses: format!("ldb-{}", request.name.replace(' ', "-").to_lowercase())
+  const containerName = `ldb-${instance.name.replace(/\s+/g, '-').toLowerCase()}`;
 
   const statusColors: Record<string, string> = {
     running: '#22c55e',
@@ -99,6 +106,21 @@
     />
   {/if}
 
+  {#if instance.status === 'running'}
+    <div class="log-actions">
+      <button class="view-logs-btn" onclick={() => showLogs = true}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        View Logs
+      </button>
+    </div>
+  {/if}
+
   <InstanceControls 
     status={instance.status}
     {onstart}
@@ -108,6 +130,17 @@
     {loading}
   />
 </div>
+
+{#if showLogs}
+  <div class="log-modal" onclick={() => showLogs = false} role="dialog" aria-modal="true" aria-label="Container logs">
+    <div class="log-modal-content" onclick={(e) => e.stopPropagation()}>
+      <LogViewer 
+        {containerName}
+        onclose={() => showLogs = false}
+      />
+    </div>
+  </div>
+{/if}
 
 <style>
   .instance-card {
@@ -204,5 +237,54 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .log-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+  }
+
+  .view-logs-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .view-logs-btn:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+  }
+
+  .view-logs-btn svg {
+    flex-shrink: 0;
+  }
+
+  .log-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+
+  .log-modal-content {
+    max-width: 90vw;
+    max-height: 90vh;
   }
 </style>
