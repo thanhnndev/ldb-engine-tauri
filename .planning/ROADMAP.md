@@ -7,7 +7,7 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 ## Phases
 
 - [x] **Phase 1: Docker Hub Integration** - Core foundation for discovering and pulling database images
-- [ ] **Phase 2: Instance Management** - Full CRUD lifecycle with persistent storage
+- [x] **Phase 2: Instance Management** - Full CRUD lifecycle with persistent storage
 - [ ] **Phase 3: Connection Utilities** - Easy connection string generation and copying
 - [ ] **Phase 4: Log Viewer** - Real-time container log streaming
 
@@ -54,9 +54,9 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
   15. User can choose to delete or retain volume data on instance removal
 
 **Plans**: 3 plans in 3 waves
-  - [ ] 02-01-PLAN.md — Instance model + lifecycle commands
-  - [ ] 02-02-PLAN.md — State persistence + port detection + volumes
-  - [ ] 02-03-PLAN.md — Frontend UI for instance management
+  - [x] 02-01-PLAN.md — Instance model + lifecycle commands
+  - [x] 02-02-PLAN.md — State persistence + port detection + volumes
+  - [x] 02-03-PLAN.md — Frontend UI for instance management
 
 ---
 
@@ -92,6 +92,6 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Docker Hub Integration | 3/3 | ✓ Complete | 2026-02-28 |
-| 2. Instance Management | 0/3 | Not started | - |
+| 2. Instance Management | 3/3 | ✓ Complete | 2026-02-28 |
 | 3. Connection Utilities | 0/TBD | Not started | - |
 | 4. Log Viewer | 0/TBD | Not started | - |
