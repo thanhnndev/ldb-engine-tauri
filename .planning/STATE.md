@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-02-27)
 
 **Core value:** Enable developers to spin up local database instances (PostgreSQL, Redis, MySQL, MongoDB) with a single click, without manual Docker configuration.
-**Current focus:** Phase 3 Complete — Ready for Phase 4: Log Viewer
+**Current focus:** Phase 4: Log Viewer — In Progress
 
 ## Current Position
 
-Phase: 3 of 4 (Connection Utilities) — COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-02-28 — Completed 03-02-PLAN.md
+Phase: 4 of 4 (Log Viewer) — IN PROGRESS
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-28 — Completed 04-01-PLAN.md
 
-Progress: [█████████████░] 62% (8/13 plans complete)
+Progress: [█████████████▓] 69% (9/13 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: ~2.4min
-- Total execution time: ~0.32 hours
+- Total execution time: ~0.36 hours
 
 **By Phase:**
 
@@ -30,11 +30,12 @@ Progress: [█████████████░] 62% (8/13 plans complete)
 | 01-docker-hub-integration | 3 | 3 | ~2.5min |
 | 02-instance-management | 3 | 3 | ~2.3min |
 | 03-connection-utilities | 2 | 2 | ~2.5min |
+| 04-log-viewer | 1 | 2 | ~2min |
 
 **Recent Trend:**
+- 04-01: Backend log streaming with bollard and Tauri IPC Channel (completed)
 - 03-02: Frontend connection string component with clipboard (completed)
 - 03-01: Backend connection string command (completed)
-- 02-03: Frontend UI for instance management (completed)
 
 *Updated after each plan completion*
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - **Plan 03-02:** Show connection string only for running instances
 - **Plan 03-02:** Use @tauri-apps/plugin-clipboard-manager for clipboard operations
 - **Plan 03-02:** 2-second feedback reset on copy button
+- **Plan 04-01:** LogEvent enum with StdOut, StdErr, Error, Eof variants for structured streaming
+- **Plan 04-01:** Used bollard::container::LogsOptions struct (not builder pattern) for bollard 0.16 API
 
 ### Pending Todos
 
@@ -76,8 +79,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-28
-Stopped at: Completed 03-02-PLAN.md (Frontend connection string component)
+Last session: 2026-02-28T14:20:02Z
+Stopped at: Completed 04-01-PLAN.md (Backend log streaming)
 Resume file: None
 
-**Next:** Phase 4 - Log Viewer
+**Next:** Phase 4 Plan 02 - Frontend Log Viewer Component
