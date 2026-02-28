@@ -47,10 +47,10 @@
 
 ### Log Viewer
 
-- [ ] **LOGS-01**: System includes embedded terminal view for logs
-- [ ] **LOGS-02**: System streams stdout from selected container
-- [ ] **LOGS-03**: System streams stderr from selected container
-- [ ] **LOGS-04**: User can view logs in real-time
+- [x] **LOGS-01**: System includes embedded terminal view for logs
+- [x] **LOGS-02**: System streams stdout from selected container
+- [x] **LOGS-03**: System streams stderr from selected container
+- [x] **LOGS-04**: User can view logs in real-time
 
 ## v2 Requirements
 
@@ -96,10 +96,10 @@
 | CONN-01 | Phase 3 | Complete |
 | CONN-02 | Phase 3 | Complete |
 | CONN-03 | Phase 3 | Complete |
-| LOGS-01 | Phase 4 | Pending |
-| LOGS-02 | Phase 4 | Pending |
-| LOGS-03 | Phase 4 | Pending |
-| LOGS-04 | Phase 4 | Pending |
+| LOGS-01 | Phase 4 | Complete |
+| LOGS-02 | Phase 4 | Complete |
+| LOGS-03 | Phase 4 | Complete |
+| LOGS-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 28 total
