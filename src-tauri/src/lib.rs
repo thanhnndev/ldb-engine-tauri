@@ -27,6 +27,7 @@ pub fn run() {
             commands::instances::list_instances,
             commands::instances::get_container_status_string,
             commands::instances::get_instance_volume_path,
+            commands::connections::get_connection_string,
             commands::ports::get_occupied_ports,
             commands::ports::get_available_port,
             commands::ports::get_next_port_for_type,
