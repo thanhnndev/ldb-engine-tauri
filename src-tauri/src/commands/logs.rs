@@ -1,5 +1,4 @@
-use bollard::container::LogOutput;
-use bollard::query_parameters::LogsOptionsBuilder;
+use bollard::container::{LogOutput, LogsOptions};
 use bollard::Docker;
 use futures::StreamExt;
 use serde::Serialize;
@@ -23,13 +22,14 @@ pub async fn stream_container_logs(
     let docker = Docker::connect_with_local_defaults()
         .map_err(|e| format!("Failed to connect to Docker: {}", e))?;
 
-    let options = LogsOptionsBuilder::default()
-        .stdout(true)
-        .stderr(true)
-        .follow(true)
-        .tail(tail.map(|n| n.to_string()).unwrap_or_else(|| "100".to_string()))
-        .timestamps(true)
-        .build();
+    let options = LogsOptions::<String> {
+        stdout: true,
+        stderr: true,
+        follow: true,
+        tail: tail.map(|n| n.to_string()).unwrap_or_else(|| "100".to_string()),
+        timestamps: true,
+        ..Default::default()
+    };
 
     let mut stream = docker.logs(&container_name, Some(options));
 
