@@ -55,31 +55,52 @@ fn is_recommended_tag(name: &str) -> bool {
 
 /// Sort tags with recommended first, then alpine, then version-based
 fn sort_tags(tags: &mut [ImageTag]) {
-    tags.sort_by(|a, b| {
-        // Priority: recommended > alpine > slim > version > other
-        fn category_priority(cat: &Option<String>) -> i32 {
-            match cat.as_deref() {
-                Some("recommended") => 0,
-                Some("alpine") => 1,
-                Some("slim") => 2,
-                Some("version") => 3,
-                _ => 4,
-            }
+    // Helper to get category priority (lower = shown first)
+    fn category_priority(cat: &Option<String>) -> u8 {
+        match cat.as_deref() {
+            Some("recommended") => 0,
+            Some("alpine") => 1,
+            Some("slim") => 2,
+            Some("version") => 3,
+            _ => 4,
         }
-        
+    }
+    
+    // Helper to extract numeric prefix for version sorting
+    fn version_key(name: &str) -> (bool, i32, &str) {
+        // Returns (has_numeric_prefix, numeric_value, full_name)
+        // This allows consistent sorting: numeric prefixes first (descending), then non-numeric (ascending)
+        let prefix = name.split('-').next().unwrap_or(name);
+        if let Ok(num) = prefix.parse::<i32>() {
+            (true, num, name)
+        } else {
+            (false, 0, name)
+        }
+    }
+    
+    tags.sort_by(|a, b| {
         let a_priority = category_priority(&a.category);
         let b_priority = category_priority(&b.category);
         
+        // First sort by category priority
         match a_priority.cmp(&b_priority) {
             std::cmp::Ordering::Equal => {
-                // Within same category, sort by name (versions first, then alphabetical)
-                // Extract numeric prefix for version comparison
-                let a_num: Option<i32> = a.name.split('-').next().and_then(|s| s.parse().ok());
-                let b_num: Option<i32> = b.name.split('-').next().and_then(|s| s.parse().ok());
+                // Within same category, use consistent ordering
+                let a_key = version_key(&a.name);
+                let b_key = version_key(&b.name);
                 
-                match (a_num, b_num) {
-                    (Some(a_n), Some(b_n)) => b_n.cmp(&a_n), // Higher versions first
-                    _ => a.name.cmp(&b.name),
+                // Numeric prefixes come first (sorted descending), then non-numeric (sorted ascending)
+                match (a_key.0, b_key.0) {
+                    (true, true) => {
+                        // Both have numeric prefixes: higher versions first (descending)
+                        b_key.1.cmp(&a_key.1).then_with(|| a_key.2.cmp(b_key.2))
+                    }
+                    (false, false) => {
+                        // Neither has numeric prefix: alphabetical ascending
+                        a_key.2.cmp(b_key.2)
+                    }
+                    (true, false) => std::cmp::Ordering::Less,  // Numeric comes first
+                    (false, true) => std::cmp::Ordering::Greater, // Non-numeric comes after
                 }
             }
             other => other,
