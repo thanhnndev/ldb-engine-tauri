@@ -6,9 +6,11 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum DatabaseType {
+    #[serde(alias = "postgres")]
     PostgreSQL,
     Redis,
     MySQL,
+    #[serde(alias = "mongo")]
     MongoDB,
 }
 

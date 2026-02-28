@@ -282,6 +282,9 @@
     max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
 
   .loading {
