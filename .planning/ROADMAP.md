@@ -85,7 +85,9 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
   3. System streams stderr from container in real-time
   4. User can watch logs update as container produces output
 
-**Plans**: TBD
+**Plans**: 2 plans in 2 waves
+  - [ ] 04-01-PLAN.md — Backend log streaming command
+  - [ ] 04-02-PLAN.md — Frontend LogViewer + integration
 
 ---
 
@@ -96,4 +98,4 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 | 1. Docker Hub Integration | 3/3 | ✓ Complete | 2026-02-28 |
 | 2. Instance Management | 3/3 | ✓ Complete | 2026-02-28 |
 | 3. Connection Utilities | 2/2 | ✓ Complete | 2026-02-28 |
-| 4. Log Viewer | 0/TBD | Not started | - |
+| 4. Log Viewer | 0/2 | Ready | - |
