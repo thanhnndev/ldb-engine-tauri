@@ -4,9 +4,14 @@
   import { tick } from 'svelte';
 
   // Log event types matching Rust backend
+  // Rust serde serialization: {"type": "StdOut", "data": {"message": "log text"}}
+  interface LogEventData {
+    message: string;
+  }
+
   interface LogEvent {
     type: 'StdOut' | 'StdErr' | 'Error' | 'Eof';
-    data?: string;
+    data?: LogEventData;
   }
 
   interface LogLine {
@@ -62,13 +67,13 @@
       onLog.onmessage = (event: LogEvent) => {
         switch (event.type) {
           case 'StdOut':
-            addLog('stdout', event.data || '');
+            addLog('stdout', event.data?.message || '');
             break;
           case 'StdErr':
-            addLog('stderr', event.data || '');
+            addLog('stderr', event.data?.message || '');
             break;
           case 'Error':
-            error = event.data || 'Unknown error';
+            error = event.data?.message || 'Unknown error';
             isStreaming = false;
             break;
           case 'Eof':
