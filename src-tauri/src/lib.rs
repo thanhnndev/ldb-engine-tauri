@@ -2,6 +2,7 @@
 pub mod docker;
 pub mod commands;
 pub mod models;
+pub mod state;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -24,7 +25,11 @@ pub fn run() {
             commands::instances::restart_instance,
             commands::instances::delete_instance,
             commands::instances::list_instances,
-            commands::instances::get_instance_status,
+            commands::instances::get_container_status_string,
+            commands::instances::get_instance_volume_path,
+            commands::ports::get_occupied_ports,
+            commands::ports::get_available_port,
+            commands::ports::get_next_port_for_type,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
