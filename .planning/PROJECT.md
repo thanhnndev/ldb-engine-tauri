@@ -12,42 +12,44 @@ Enable developers to spin up local database instances (PostgreSQL, Redis, MySQL,
 
 ### Validated
 
-(None yet — ship to validate)
+- ✅ FR1: Docker Hub Integration & Image Discovery — v1.0
+- ✅ FR2: Instance Creation & Configuration — v1.0
+- ✅ FR3: Instance Lifecycle Management — v1.0
+- ✅ FR4: Persistent Data Management — v1.0
+- ✅ FR5: Connection Utilities — v1.0
+- ✅ FR6: Real-time Log Viewer — v1.0
 
 ### Active
 
-- [ ] FR1: Docker Hub Integration & Image Discovery
-- [ ] FR2: Instance Creation & Configuration
-- [ ] FR3: Instance Lifecycle Management
-- [ ] FR4: Persistent Data Management
-- [ ] FR5: Connection Utilities
-- [ ] FR6: Real-time Log Viewer
+(None yet — start next milestone with `/gsd-new-milestone`)
 
 ### Out of Scope
 
 - Multi-node clustering — single instance only
 - Cloud deployment — Linux local only
 - User management/auth — single user local app
+- Built-in SQL query editor — beyond core value
+- Remote management — local-first design
 
 ## Context
 
-- **Starting point:** Fresh Tauri v2 starter kit with Svelte frontend
-- **Tech stack:** Rust backend, Tauri v2, Svelte, Tailwind CSS v4, Shadcn/ui, Docker SDK
+- **Current milestone:** v1.0 MVP shipped 2026-03-01
+- **Tech stack:** Rust backend, Tauri v2, Svelte 5, Tailwind CSS v4, Shadcn/ui, bollard 0.20 (Docker SDK)
+- **Stats:** ~15,846 LOC, 53 files, 12 plans, 2 days to ship
 - **Target users:** Linux developers who need quick local databases
-
-## Constraints
-
-- **Wayland/Niri:** Must work natively on Wayland without XWayland
-- **Performance:** Under 50MB binary, under 2s startup, minimal memory footprint
-- **Distribution:** AUR package primary, Flatpak secondary
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Tauri v2 | Modern, lightweight, Rust-native | — Pending |
-| Shadcn/ui | Developer-focused aesthetic, accessible | — Pending |
-| SQLite for state | Simple, Rust-native, sufficient for metadata | — Pending |
+| Tauri v2 | Modern, lightweight, Rust-native | ✅ Shipped v1.0 |
+| Shadcn/ui | Developer-focused aesthetic, accessible | ✅ Shipped v1.0 |
+| SQLite for state | Simple, Rust-native, sufficient for metadata | ✅ Shipped v1.0 |
+| bollard 0.20 | Docker API integration | ✅ Shipped v1.0 |
+| Svelte 5 runes | Modern reactivity | ✅ Shipped v1.0 |
+| Container naming "ldb-" prefix | Identify our containers | ✅ Shipped v1.0 |
+| Modal overlay for log viewing | Clean UI pattern | ✅ Shipped v1.0 |
 
 ---
-*Last updated: 2025-02-27 after initialization*
+
+*Last updated: 2026-03-01 after v1.0 milestone*

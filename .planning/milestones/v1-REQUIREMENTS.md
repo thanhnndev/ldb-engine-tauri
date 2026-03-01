@@ -1,3 +1,13 @@
+# Requirements Archive: v1.0 MVP
+
+**Archived:** 2026-03-01
+**Status:** ✅ SHIPPED
+
+This is the archived requirements specification for v1.0.
+For current requirements, see `.planning/REQUIREMENTS.md` (created for next milestone).
+
+---
+
 # Requirements: LDB-Engine
 
 **Defined:** 2026-02-28
@@ -107,5 +117,22 @@
 - Unmapped: 0 ✓
 
 ---
+
 *Requirements defined: 2026-02-28*
 *Last updated: 2026-02-28 after initial definition*
+
+---
+
+## Milestone Summary
+
+**Shipped:** 28 of 28 v1 requirements
+
+**Adjusted:** 0
+
+**Dropped:** 0
+
+All 28 requirements shipped as specified. The milestone delivered complete functionality for Docker Hub integration, instance management with lifecycle control, persistent data handling, connection utilities, and real-time log viewing.
+
+---
+
+*Archived: 2026-03-01 as part of v1.0 milestone completion*
