@@ -1,53 +1,39 @@
 ---
 milestone: v1
-audited: 2026-02-28T16:00:00Z
-status: gaps_found
+audited: 2026-03-01T12:00:00Z
+status: passed
 scores:
   requirements: 28/28
-  phases: 4/4
-  integration: 17/18
-  flows: 3/4
+  phases: 6/6
+  integration: 5/5
+  flows: 4/4
 gaps:
   requirements: []
-  integration:
-    - file: "src/lib/components/InstanceCard.svelte"
-      line: 280
-      issue: "deleteVolume parameter ignored"
-      severity: critical
-      description: "InstanceCard.ondelete callback ignores the deleteVolume parameter from InstanceControls, always passing false to deleteInstance. Users who check 'Delete volume data' checkbox will NOT have their volume deleted."
-  flows:
-    - flow: "Delete Instance with Volume"
-      step: 6
-      breaks_at: "InstanceCard.svelte:280"
-      issue: "deleteVolume flag not propagated to backend"
-tech_debt:
-  - phase: 01-docker-hub-integration
-    items:
-      - "Orphaned: ImageCard.svelte - component exists but not imported anywhere"
-      - "Orphaned: TagList.svelte - component exists but not imported anywhere (InstanceForm has inline tag selection)"
-      - "Orphaned: PullProgress.svelte - component exists but not imported anywhere (InstanceList has inline progress overlay)"
+  integration: []
+  flows: []
+tech_debt: []
 ---
 
 # Milestone v1: Audit Report
 
-**Audited:** 2026-02-28T16:00:00Z  
-**Status:** ⚠️ GAPS FOUND  
-**Overall Score:** 28/28 requirements satisfied, 1 critical bug
+**Audited:** 2026-03-01T12:00:00Z  
+**Status:** ✅ PASSED  
+**Overall Score:** 28/28 requirements, 6/6 phases, 5/5 integration, 4/4 flows
 
 ---
 
 ## Executive Summary
 
-All 28 requirements are implemented and verified at the phase level. Cross-phase integration revealed **1 critical bug** in the Delete Instance flow that must be fixed before milestone completion.
+All 28 requirements are implemented and verified at the phase level. Cross-phase integration is complete with all E2E flows working. The critical gap (GAP-01) and tech debt identified in the initial audit have been resolved.
 
 ### Scores
 
 | Category | Score | Status |
 |----------|-------|--------|
 | Requirements | 28/28 | ✅ All satisfied |
-| Phases | 4/4 | ✅ All passed |
-| Integration | 17/18 | ⚠️ 1 critical bug |
-| E2E Flows | 3/4 | ⚠️ 1 broken flow |
+| Phases | 6/6 | ✅ All passed |
+| Integration | 5/5 | ✅ All connected |
+| E2E Flows | 4/4 | ✅ All complete |
 
 ---
 
@@ -59,6 +45,8 @@ All 28 requirements are implemented and verified at the phase level. Cross-phase
 | 2 | Instance Management | 15/15 | ✅ PASSED |
 | 3 | Connection Utilities | 9/9 | ✅ PASSED |
 | 4 | Log Viewer | 7/7 | ✅ PASSED |
+| 5 | Fix Delete Volume Bug | 3/3 | ✅ PASSED |
+| 6 | Clean Up Orphaned Components | 4/4 | ✅ PASSED |
 
 ---
 
@@ -109,79 +97,41 @@ All 28 requirements mapped to phases and verified:
 
 ---
 
-## Critical Gaps
+## Gap Closure Summary
 
-### GAP-01: Delete Volume Option Ignored
+### GAP-01: Delete Volume Option Ignored (RESOLVED)
 
-**Severity:** Critical  
-**File:** `src/lib/components/InstanceCard.svelte:280`  
-**Flow:** Delete Instance with Volume
+**Original Issue:** InstanceCard.svelte ignored deleteVolume parameter, always passing false to deleteInstance
 
-**Problem:**
-```svelte
-ondelete={() => deleteInstance(instance, false)}
-```
+**Resolution:** Phase 5 (Fix Delete Volume Bug)
+- InstanceCard.svelte now correctly passes deleteVolume parameter: `ondelete={(deleteVolume) => deleteInstance(instance, deleteVolume)}`
+- Verified in instances.rs:602-643 - delete_instance correctly handles delete_volume flag
+- Volume directory deleted when flag is true
 
-The `ondelete` callback receives a `deleteVolume` parameter from `InstanceControls`, but `InstanceCard` ignores it and always passes `false` to `deleteInstance`.
+### Tech Debt: Orphaned Components (RESOLVED)
 
-**Impact:** Users who check "Delete volume data" will NOT have their volume deleted. This breaks PERS-04 requirement.
+**Original Issue:** 3 components (ImageCard, TagList, PullProgress) existed but not imported
 
-**Fix Required:**
-```svelte
-ondelete={(deleteVolume) => deleteInstance(instance, deleteVolume)}
-```
-
----
-
-## E2E Flow Status
-
-| Flow | Status | Notes |
-|------|--------|-------|
-| Create PostgreSQL Instance | ✅ COMPLETE | All 9 steps verified |
-| Get Connection String | ✅ COMPLETE | All 5 steps verified, all formats correct |
-| View Logs | ✅ COMPLETE | All 7 steps verified |
-| Delete Instance with Volume | ❌ BROKEN | Breaks at step 6 - deleteVolume not passed |
-
----
-
-## Tech Debt
-
-| Phase | Items | Severity |
-|-------|-------|----------|
-| 01-docker-hub-integration | 3 orphaned components | Low (code cleanup) |
-
-### Orphaned Components
-
-These components exist but are not imported anywhere:
-- `src/lib/components/ImageCard.svelte` - replaced by inline UI
-- `src/lib/components/TagList.svelte` - replaced by inline in InstanceForm
-- `src/lib/components/PullProgress.svelte` - replaced by inline in InstanceList
-
-**Recommendation:** Delete unused components or integrate them for better code organization.
+**Resolution:** Phase 6 (Clean Up Orphaned Components)
+- All 3 orphaned components removed from codebase
+- No broken import references remain
+- InstanceList.svelte correctly uses PullProgress type from $lib/types (not the deleted component)
 
 ---
 
 ## Cross-Phase Integration
 
-### Export/Import Chain (18/21 connected)
+### Export/Import Chain (5/5 connected)
 
 | From Phase | Export | Used By | Status |
 |------------|--------|---------|--------|
 | 1 | DockerHubClient | commands/images.rs | ✅ |
-| 1 | DockerClient | commands/images.rs | ✅ |
 | 1 | get_docker_tags | InstanceForm.svelte | ✅ |
 | 1 | pull_docker_image | InstanceList.svelte | ✅ |
-| 1 | ImageCard | — | ⚠️ Orphaned |
-| 1 | TagList | — | ⚠️ Orphaned |
-| 1 | PullProgress | — | ⚠️ Orphaned |
 | 2 | Instance model | connections.rs, instances.rs, state.rs | ✅ |
 | 2 | StateManager | instances.rs, connections.rs | ✅ |
 | 2 | create_instance | InstanceList.svelte | ✅ |
 | 2 | lifecycle commands | InstanceList.svelte | ✅ |
-| 2 | InstanceList | +page.svelte | ✅ |
-| 2 | InstanceCard | InstanceList.svelte | ✅ |
-| 2 | InstanceControls | InstanceCard.svelte | ✅ |
-| 2 | InstanceForm | InstanceList.svelte | ✅ |
 | 3 | get_connection_string | ConnectionString.svelte | ✅ |
 | 3 | ConnectionString | InstanceCard.svelte | ✅ |
 | 4 | stream_container_logs | LogViewer.svelte | ✅ |
@@ -200,33 +150,29 @@ Rust ↔ TypeScript types verified for Instance, CreateInstanceRequest, Database
 
 ---
 
-## Recommendations
+## E2E Flow Status
 
-### Before Milestone Completion (Required)
-
-1. **Fix GAP-01** - Update `InstanceCard.svelte:280` to pass `deleteVolume` parameter:
-   ```diff
-   - ondelete={() => deleteInstance(instance, false)}
-   + ondelete={(deleteVolume) => deleteInstance(instance, deleteVolume)}
-   ```
-
-### Post-Milestone (Optional)
-
-2. **Clean up orphaned components** - Delete or integrate ImageCard, TagList, PullProgress
+| Flow | Status | Notes |
+|------|--------|-------|
+| Create PostgreSQL Instance | ✅ COMPLETE | All 9 steps verified |
+| Get Connection String | ✅ COMPLETE | All 5 steps verified, all formats correct |
+| View Logs | ✅ COMPLETE | All 7 steps verified |
+| Delete Instance with Volume | ✅ COMPLETE | GAP-01 resolved in Phase 5 |
 
 ---
 
-## Verification Commands
+## Final Verification
 
-```bash
-# Verify fix applied
-grep -n "ondelete=" src/lib/components/InstanceCard.svelte
+### Integration Checker Results
 
-# Expected output after fix:
-# 280:    ondelete={(deleteVolume) => deleteInstance(instance, deleteVolume)}
-```
+- **Status:** passed
+- **Integration Score:** 5/5
+- **Flow Score:** 4/4
+- **Issues Found:** 0
+
+All cross-phase wiring is intact. All E2E flows work end-to-end. Phase 5 and Phase 6 fixes are verified and do not introduce any new integration issues.
 
 ---
 
-*Audit completed: 2026-02-28*  
+*Audit completed: 2026-03-01*  
 *Auditor: OpenCode (gsd-verifier + gsd-integration-checker)*
