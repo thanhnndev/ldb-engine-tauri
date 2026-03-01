@@ -21,21 +21,20 @@ Enable developers to spin up local database instances (PostgreSQL, Redis, MySQL,
 
 ### Active
 
-(None yet — start next milestone with `/gsd-new-milestone`)
+- [ ] **v1.1 Features:** SQL Query Editor, Backup/Restore, Multiple Instances, Environment Variables, Port Management, Health Checks, Container Exec, Presets
 
 ### Out of Scope
 
 - Multi-node clustering — single instance only
 - Cloud deployment — Linux local only
 - User management/auth — single user local app
-- Built-in SQL query editor — beyond core value
 - Remote management — local-first design
 
 ## Context
 
-- **Current milestone:** v1.0 MVP shipped 2026-03-01
+- **Current milestone:** v1.1 (planning)
 - **Tech stack:** Rust backend, Tauri v2, Svelte 5, Tailwind CSS v4, Shadcn/ui, bollard 0.20 (Docker SDK)
-- **Stats:** ~15,846 LOC, 53 files, 12 plans, 2 days to ship
+- **Previous milestone:** v1.0 MVP shipped 2026-03-01 (12 plans, ~15,846 LOC)
 - **Target users:** Linux developers who need quick local databases
 
 ## Key Decisions

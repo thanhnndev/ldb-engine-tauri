@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-01)
 
 **Core value:** Enable developers to spin up local database instances (PostgreSQL, Redis, MySQL, MongoDB) with a single click, without manual Docker configuration.
-**Current focus:** v1.0 MVP shipped — Planning next milestone
+**Current focus:** v1.1 planning
 
 ## Current Position
 
-Phase: Complete
-Plan: N/A
-Status: Milestone shipped
-Last activity: 2026-03-01 — v1.0 milestone complete
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-01 — Milestone v1.1 started
 
-**Project Status:** v1.0 shipped. Ready for next milestone.
+**Project Status:** v1.1 planning in progress
 
 ## Performance Metrics
 
@@ -38,7 +38,15 @@ Last activity: 2026-03-01 — v1.0 milestone complete
 
 ## Next Milestone
 
-Ready to start v1.1 planning. Run `/gsd-new-milestone` to begin the questioning → research → requirements → roadmap workflow.
+**v1.1 Goals:**
+- SQL Query Editor
+- Backup & Restore
+- Multiple Instances
+- Environment Variables
+- Port Management
+- Health Checks
+- Container Exec
+- Presets
 
 ---
 
