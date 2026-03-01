@@ -10,6 +10,8 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 - [x] **Phase 2: Instance Management** - Full CRUD lifecycle with persistent storage
 - [x] **Phase 3: Connection Utilities** - Easy connection string generation and copying
 - [x] **Phase 4: Log Viewer** - Real-time container log streaming
+- [ ] **Phase 5: Fix Delete Volume Bug** - Critical bug fix for PERS-04
+- [ ] **Phase 6: Clean Up Orphaned Components** - Remove unused Phase 1 components
 
 ## Phase Details
 
@@ -91,6 +93,34 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 
 ---
 
+### Phase 5: Fix Delete Volume Bug
+**Goal**: Fix critical bug where deleteVolume parameter is ignored when deleting instances
+**Depends on**: Phase 4
+**Gap Closure**: Closes GAP-01 from v1-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. InstanceCard.svelte passes deleteVolume parameter correctly to deleteInstance
+  2. Users who check "Delete volume data" will have their volume deleted
+  3. "Delete Instance with Volume" E2E flow completes successfully
+
+**Plans**: 1 plan in 1 wave
+  - [ ] 05-01-PLAN.md — Fix deleteVolume parameter propagation
+
+---
+
+### Phase 6: Clean Up Orphaned Components
+**Goal**: Remove unused components from Phase 1 to reduce codebase confusion
+**Depends on**: Phase 5
+**Gap Closure**: Tech debt cleanup from v1-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. ImageCard.svelte removed (or integrated if still needed)
+  2. TagList.svelte removed (or integrated if still needed)
+  3. PullProgress.svelte removed (or integrated if still needed)
+
+**Plans**: 1 plan in 1 wave
+  - [ ] 06-01-PLAN.md — Remove orphaned components
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -99,3 +129,5 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
 | 2. Instance Management | 3/3 | ✓ Complete | 2026-02-28 |
 | 3. Connection Utilities | 2/2 | ✓ Complete | 2026-02-28 |
 | 4. Log Viewer | 2/2 | ✓ Complete | 2026-02-28 |
+| 5. Fix Delete Volume Bug | 0/1 | 🔄 In Progress | — |
+| 6. Clean Up Orphaned Components | 0/1 | ⏳ Pending | — |
