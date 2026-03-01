@@ -117,7 +117,7 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
   3. PullProgress.svelte removed (or integrated if still needed)
 
 **Plans**: 1 plan in 1 wave
-  - [ ] 06-01-PLAN.md — Remove orphaned components
+  - [x] 06-01-PLAN.md — Remove orphaned components
 
 ---
 
