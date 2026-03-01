@@ -103,7 +103,7 @@ A lightweight, GUI-driven local database manager for Linux developers that provi
   3. "Delete Instance with Volume" E2E flow completes successfully
 
 **Plans**: 1 plan in 1 wave
-  - [ ] 05-01-PLAN.md — Fix deleteVolume parameter propagation
+  - [x] 05-01-PLAN.md — Fix deleteVolume parameter propagation
 
 ---
 
