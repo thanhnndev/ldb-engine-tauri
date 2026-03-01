@@ -277,7 +277,7 @@
           onstart={() => startInstance(instance)}
           onstop={() => stopInstance(instance)}
           onrestart={() => restartInstance(instance)}
-          ondelete={() => deleteInstance(instance, false)}
+          ondelete={(deleteVolume) => deleteInstance(instance, deleteVolume)}
           loading={operationLoading?.startsWith('start-') && operationLoading?.endsWith(instance.id) ||
                   operationLoading?.startsWith('stop-') && operationLoading?.endsWith(instance.id) ||
                   operationLoading?.startsWith('restart-') && operationLoading?.endsWith(instance.id) ||
